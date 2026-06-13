@@ -7,15 +7,23 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <main class="app">
+  <main class="app" id="app">
     <section class="top-bar">
       <div>
         <h1>For / Since Dash</h1>
         <p>for なら ↑ / since なら ↓</p>
       </div>
-      <div class="score-box">
-        <span>SCORE</span>
-        <strong id="score">0</strong>
+
+      <div class="score-row">
+        <div class="score-box">
+          <span>SCORE</span>
+          <strong id="score">0</strong>
+        </div>
+
+        <div class="score-box high-score">
+          <span>HIGH</span>
+          <strong id="highScore">0</strong>
+        </div>
       </div>
     </section>
 
@@ -47,6 +55,12 @@
     <section class="mobile-controls">
       <button id="upButton">↑ for</button>
       <button id="downButton">↓ since</button>
+    </section>
+
+    <section class="review-panel" id="reviewPanel">
+      <h2>Review</h2>
+      <p class="review-note">答えたカードと正解を確認できます。</p>
+      <div id="reviewList"></div>
     </section>
   </main>
 
