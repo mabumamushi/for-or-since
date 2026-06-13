@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For / Since Dash</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="top-bar">
+      <div>
+        <h1>For / Since Dash</h1>
+        <p>for なら ↑ / since なら ↓</p>
+      </div>
+      <div class="score-box">
+        <span>SCORE</span>
+        <strong id="score">0</strong>
+      </div>
+    </section>
+
+    <section class="game-area" id="gameArea">
+      <div class="danger-line"></div>
+
+      <div class="question-card" id="card">
+        <span id="cardText">three days</span>
+      </div>
+
+      <div class="center-message" id="message">
+        <h2>For / Since Game</h2>
+        <p>流れてくるカードを見て、正しい矢印キーを押そう。</p>
+        <button id="startButton">START</button>
+      </div>
+    </section>
+
+    <section class="control-guide">
+      <div class="key-box">
+        <span class="arrow">↑</span>
+        <p>for</p>
+      </div>
+      <div class="key-box">
+        <span class="arrow">↓</span>
+        <p>since</p>
+      </div>
+    </section>
+
+    <section class="mobile-controls">
+      <button id="upButton">↑ for</button>
+      <button id="downButton">↓ since</button>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
