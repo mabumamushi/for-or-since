@@ -90,9 +90,9 @@ function clearCards() {
 function getSpawnInterval() {
   const level = Math.floor(spawnedCount / 10);
 
-  const interval = 1000 - level * 100;
+  const interval = 3000 - level * 100;
 
-  return Math.max(interval, 600);
+  return Math.max(interval, 1200);
 }
 
 function getMoveSpeed() {
@@ -113,7 +113,7 @@ function spawnCard() {
   const cardWidth = 230;
 
   const x = gameWidth + 40;
-  const y = 70 + Math.random() * (gameArea.clientHeight - 160);
+  const y = findSafeYPosition();
 
   card.style.display = "flex";
   card.style.left = `${x}px`;
@@ -131,6 +131,55 @@ function spawnCard() {
   });
 
   spawnedCount++;
+}
+
+function findSafeYPosition() {
+  const cardHeight = 110;
+  const topMargin = 70;
+  const bottomMargin = 70;
+  const minimumGap = 125;
+
+  const minY = topMargin;
+  const maxY = gameArea.clientHeight - bottomMargin - cardHeight;
+
+  for (let i = 0; i < 30; i++) {
+    const candidateY = minY + Math.random() * (maxY - minY);
+
+    const isOverlapping = activeCards.some((cardData) => {
+      const verticalDistance = Math.abs(cardData.y - candidateY);
+      const horizontalDistance = Math.abs(cardData.x - (gameArea.clientWidth + 40));
+
+      const isNearHorizontally = horizontalDistance < 280;
+      const isNearVertically = verticalDistance < minimumGap;
+
+      return isNearHorizontally && isNearVertically;
+    });
+
+    if (!isOverlapping) {
+      return candidateY;
+    }
+  }
+
+  const lanes = [
+    minY,
+    minY + 130,
+    minY + 260
+  ].filter((laneY) => laneY <= maxY);
+
+  const leastCrowdedLane = lanes.reduce((bestLane, laneY) => {
+    const bestCount = countCardsNearLane(bestLane);
+    const currentCount = countCardsNearLane(laneY);
+
+    return currentCount < bestCount ? laneY : bestLane;
+  }, lanes[0]);
+
+  return leastCrowdedLane;
+}
+
+function countCardsNearLane(laneY) {
+  return activeCards.filter((cardData) => {
+    return Math.abs(cardData.y - laneY) < 120;
+  }).length;
 }
 
 function gameLoop(currentTime) {
