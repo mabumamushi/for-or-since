@@ -1,6 +1,4 @@
 const app = document.getElementById("app");
-const card = document.getElementById("card");
-const cardText = document.getElementById("cardText");
 const scoreEl = document.getElementById("score");
 const highScoreEl = document.getElementById("highScore");
 const message = document.getElementById("message");
@@ -44,63 +42,132 @@ const questions = [
 let score = 0;
 let highScore = Number(localStorage.getItem("forSinceHighScore")) || 0;
 
-let speed = 2.6;
-let cardX = 0;
-let currentQuestion = null;
 let isPlaying = false;
 let animationId = null;
+
+let activeCards = [];
 let answerLog = [];
+
+let lastFrameTime = 0;
+let lastSpawnTime = 0;
+let spawnedCount = 0;
+
+let baseMoveSpeed = 180; // px / 秒
+let moveSpeed = baseMoveSpeed;
 
 highScoreEl.textContent = highScore;
 
 function startGame() {
   score = 0;
-  speed = 2.6;
+  spawnedCount = 0;
+  activeCards = [];
   answerLog = [];
   isPlaying = true;
+
+  moveSpeed = baseMoveSpeed;
 
   scoreEl.textContent = score;
   reviewPanel.style.display = "none";
   reviewList.innerHTML = "";
 
-  message.style.display = "none";
-  card.style.display = "flex";
+  clearCards();
 
-  setNewQuestion();
-  gameLoop();
+  message.style.display = "none";
+
+  lastFrameTime = performance.now();
+  lastSpawnTime = performance.now();
+
+  spawnCard();
+  gameLoop(lastFrameTime);
 }
 
-function setNewQuestion() {
-  const randomIndex = Math.floor(Math.random() * questions.length);
-  currentQuestion = questions[randomIndex];
+function clearCards() {
+  document.querySelectorAll(".question-card").forEach((card) => {
+    card.remove();
+  });
+}
 
-  cardText.textContent = currentQuestion.text;
+function getSpawnInterval() {
+  const level = Math.floor(spawnedCount / 10);
+
+  const interval = 1000 - level * 100;
+
+  return Math.max(interval, 600);
+}
+
+function getMoveSpeed() {
+  const level = Math.floor(score / 20);
+
+  return baseMoveSpeed + level * 20;
+}
+
+function spawnCard() {
+  const randomIndex = Math.floor(Math.random() * questions.length);
+  const question = questions[randomIndex];
+
+  const card = document.createElement("div");
+  card.className = "question-card";
+  card.innerHTML = `<span>${question.text}</span>`;
 
   const gameWidth = gameArea.clientWidth;
-  cardX = gameWidth + 40;
+  const cardWidth = 230;
 
-  const randomY = 90 + Math.random() * (gameArea.clientHeight - 190);
-  card.style.top = `${randomY}px`;
-  card.style.left = `${cardX}px`;
+  const x = gameWidth + 40;
+  const y = 70 + Math.random() * (gameArea.clientHeight - 160);
+
+  card.style.display = "flex";
+  card.style.left = `${x}px`;
+  card.style.top = `${y}px`;
+
+  gameArea.appendChild(card);
+
+  activeCards.push({
+    id: crypto.randomUUID(),
+    element: card,
+    question,
+    x,
+    y,
+    width: cardWidth
+  });
+
+  spawnedCount++;
 }
 
-function gameLoop() {
+function gameLoop(currentTime) {
   if (!isPlaying) return;
 
-  cardX -= speed;
-  card.style.left = `${cardX}px`;
+  const deltaTime = (currentTime - lastFrameTime) / 1000;
+  lastFrameTime = currentTime;
+
+  const spawnInterval = getSpawnInterval();
+
+  if (currentTime - lastSpawnTime >= spawnInterval) {
+    spawnCard();
+    lastSpawnTime = currentTime;
+  }
+
+  moveSpeed = getMoveSpeed();
+
+  activeCards.forEach((cardData) => {
+    cardData.x -= moveSpeed * deltaTime;
+    cardData.element.style.left = `${cardData.x}px`;
+  });
 
   const dangerLineX = 50;
 
-  if (cardX <= dangerLineX) {
+  const missedCard = activeCards.find((cardData) => {
+    return cardData.x <= dangerLineX;
+  });
+
+  if (missedCard) {
     answerLog.push({
-      text: currentQuestion.text,
-      correctAnswer: currentQuestion.answer,
+      text: missedCard.question.text,
+      correctAnswer: missedCard.question.answer,
       yourAnswer: "未回答",
       isCorrect: false
     });
 
-    triggerWrongEffect(() => {
+    triggerWrongEffect(missedCard.element, () => {
       gameOver();
     });
 
@@ -110,14 +177,28 @@ function gameLoop() {
   animationId = requestAnimationFrame(gameLoop);
 }
 
-function checkAnswer(input) {
-  if (!isPlaying || !currentQuestion) return;
+function getTargetCard() {
+  if (activeCards.length === 0) return null;
 
-  const isCorrect = input === currentQuestion.answer;
+  const sortedCards = [...activeCards].sort((a, b) => {
+    return a.x - b.x;
+  });
+
+  return sortedCards[0];
+}
+
+function checkAnswer(input) {
+  if (!isPlaying) return;
+
+  const targetCard = getTargetCard();
+
+  if (!targetCard) return;
+
+  const isCorrect = input === targetCard.question.answer;
 
   answerLog.push({
-    text: currentQuestion.text,
-    correctAnswer: currentQuestion.answer,
+    text: targetCard.question.text,
+    correctAnswer: targetCard.question.answer,
     yourAnswer: input,
     isCorrect
   });
@@ -127,25 +208,30 @@ function checkAnswer(input) {
     scoreEl.textContent = score;
 
     playCorrectSound();
-    showCorrectPop();
+    showCorrectPop(targetCard.element);
+    removeCard(targetCard);
 
-    if (score % 10 === 0) {
-      speed += 0.7;
-    }
-
-    setNewQuestion();
   } else {
-    triggerWrongEffect(() => {
+    triggerWrongEffect(targetCard.element, () => {
       gameOver();
     });
   }
+}
+
+function removeCard(cardData) {
+  activeCards = activeCards.filter((card) => {
+    return card.id !== cardData.id;
+  });
+
+  setTimeout(() => {
+    cardData.element.remove();
+  }, 120);
 }
 
 function gameOver() {
   isPlaying = false;
   cancelAnimationFrame(animationId);
 
-  card.style.display = "none";
   updateHighScore();
   showResultMessage();
   showReview();
@@ -181,14 +267,18 @@ function showReview() {
   reviewPanel.style.display = "block";
   reviewList.innerHTML = "";
 
-  if (answerLog.length === 0) {
-    reviewList.innerHTML = `<p>まだ回答がありません。</p>`;
+  const wrongAnswers = answerLog.filter((item) => {
+    return !item.isCorrect;
+  });
+
+  if (wrongAnswers.length === 0) {
+    reviewList.innerHTML = `<p>間違えた問題はありません。Perfect!</p>`;
     return;
   }
 
-  answerLog.forEach((item) => {
+  wrongAnswers.forEach((item) => {
     const row = document.createElement("div");
-    row.className = `review-item ${item.isCorrect ? "correct" : "wrong"}`;
+    row.className = "review-item wrong";
 
     row.innerHTML = `
       <div>
@@ -197,8 +287,8 @@ function showReview() {
           あなたの回答：${item.yourAnswer} / 正解：${item.correctAnswer}
         </div>
       </div>
-      <div class="result-badge ${item.isCorrect ? "correct" : "wrong"}">
-        ${item.isCorrect ? "OK" : "CHECK"}
+      <div class="result-badge wrong">
+        CHECK
       </div>
     `;
 
@@ -206,7 +296,7 @@ function showReview() {
   });
 }
 
-function triggerWrongEffect(callback) {
+function triggerWrongEffect(targetElement, callback) {
   if (!isPlaying) return;
 
   isPlaying = false;
@@ -216,34 +306,38 @@ function triggerWrongEffect(callback) {
 
   gameArea.classList.remove("wrong-flash");
   app.classList.remove("shake");
-  card.classList.remove("card-shake");
+
+  if (targetElement) {
+    targetElement.classList.remove("card-shake");
+  }
 
   void gameArea.offsetWidth;
 
   gameArea.classList.add("wrong-flash");
   app.classList.add("shake");
-  card.classList.add("card-shake");
+
+  if (targetElement) {
+    targetElement.classList.add("card-shake");
+  }
 
   setTimeout(() => {
     gameArea.classList.remove("wrong-flash");
     app.classList.remove("shake");
-    card.classList.remove("card-shake");
+
+    if (targetElement) {
+      targetElement.classList.remove("card-shake");
+    }
 
     callback();
   }, 700);
 }
 
-function showCorrectPop() {
-  card.classList.remove("correct-pop");
-  void card.offsetWidth;
-  card.classList.add("correct-pop");
-
-  setTimeout(() => {
-    card.classList.remove("correct-pop");
-  }, 180);
+function showCorrectPop(targetElement) {
+  targetElement.classList.remove("correct-pop");
+  void targetElement.offsetWidth;
+  targetElement.classList.add("correct-pop");
 }
 
-// 正解音
 function playCorrectSound() {
   const audioCtx = new AudioContext();
 
@@ -264,7 +358,6 @@ function playCorrectSound() {
   osc.stop(audioCtx.currentTime + 0.18);
 }
 
-// 不正解音
 function playWrongSound() {
   const audioCtx = new AudioContext();
 
