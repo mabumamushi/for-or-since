@@ -23,6 +23,14 @@ const questions = [
   { text: "half an hour", answer: "for" },
   { text: "several months", answer: "for" },
   { text: "a short time", answer: "for" },
+  { text: "5 minutes", answer: "for" },
+  { text: "a week", answer: "for" },
+  { text: "3 months", answer: "for" },
+  { text: "7 years", answer: "for" },
+  { text: "two hours", answer: "for" },
+  { text: "four days", answer: "for" },
+  { text: "ten years", answer: "for" },
+  { text: "a few weeks", answer: "for" },
 
   // since に続く語
   { text: "Monday", answer: "since" },
@@ -36,7 +44,15 @@ const questions = [
   { text: "8 o'clock", answer: "since" },
   { text: "then", answer: "since" },
   { text: "my birthday", answer: "since" },
-  { text: "we met", answer: "since" }
+  { text: "we met", answer: "since" },
+  { text: "5 minutes ago", answer: "since" },
+  { text: "a week ago", answer: "since" },
+  { text: "3 months ago", answer: "since" },
+  { text: "7 years ago", answer: "since" },
+  { text: "last Monday", answer: "since" },
+  { text: "July", answer: "since" },
+  { text: "I came here", answer: "since" },
+  { text: "I was ten", answer: "since" }
 ];
 
 let score = 0;
@@ -90,9 +106,9 @@ function clearCards() {
 function getSpawnInterval() {
   const level = Math.floor(spawnedCount / 10);
 
-  const interval = 3000 - level * 100;
+  const interval = 2600 - level * 200;
 
-  return Math.max(interval, 1200);
+  return Math.max(interval, 1000);
 }
 
 function getMoveSpeed() {
