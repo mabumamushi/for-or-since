@@ -1,0 +1,137 @@
+const card = document.getElementById("card");
+const cardText = document.getElementById("cardText");
+const scoreEl = document.getElementById("score");
+const message = document.getElementById("message");
+const startButton = document.getElementById("startButton");
+const gameArea = document.getElementById("gameArea");
+const upButton = document.getElementById("upButton");
+const downButton = document.getElementById("downButton");
+
+const questions = [
+  // for に続く語
+  { text: "three days", answer: "for" },
+  { text: "two weeks", answer: "for" },
+  { text: "five years", answer: "for" },
+  { text: "a long time", answer: "for" },
+  { text: "ten minutes", answer: "for" },
+  { text: "six months", answer: "for" },
+  { text: "many hours", answer: "for" },
+  { text: "a few days", answer: "for" },
+  { text: "one year", answer: "for" },
+  { text: "half an hour", answer: "for" },
+
+  // since に続く語
+  { text: "Monday", answer: "since" },
+  { text: "2019", answer: "since" },
+  { text: "last year", answer: "since" },
+  { text: "yesterday", answer: "since" },
+  { text: "this morning", answer: "since" },
+  { text: "I was a child", answer: "since" },
+  { text: "April", answer: "since" },
+  { text: "last week", answer: "since" },
+  { text: "8 o'clock", answer: "since" },
+  { text: "then", answer: "since" }
+];
+
+let score = 0;
+let speed = 2.6;
+let cardX = 0;
+let currentQuestion = null;
+let isPlaying = false;
+let animationId = null;
+
+function startGame() {
+  score = 0;
+  speed = 2.6;
+  isPlaying = true;
+
+  scoreEl.textContent = score;
+  message.style.display = "none";
+  card.style.display = "flex";
+
+  setNewQuestion();
+  gameLoop();
+}
+
+function setNewQuestion() {
+  const randomIndex = Math.floor(Math.random() * questions.length);
+  currentQuestion = questions[randomIndex];
+
+  cardText.textContent = currentQuestion.text;
+
+  const gameWidth = gameArea.clientWidth;
+  cardX = gameWidth + 40;
+
+  const randomY = 90 + Math.random() * (gameArea.clientHeight - 190);
+  card.style.top = `${randomY}px`;
+  card.style.left = `${cardX}px`;
+}
+
+function gameLoop() {
+  if (!isPlaying) return;
+
+  cardX -= speed;
+  card.style.left = `${cardX}px`;
+
+  const dangerLineX = 50;
+
+  if (cardX <= dangerLineX) {
+    gameOver();
+    return;
+  }
+
+  animationId = requestAnimationFrame(gameLoop);
+}
+
+function checkAnswer(input) {
+  if (!isPlaying || !currentQuestion) return;
+
+  if (input === currentQuestion.answer) {
+    score++;
+    scoreEl.textContent = score;
+
+    if (score % 10 === 0) {
+      speed += 0.7;
+    }
+
+    setNewQuestion();
+  } else {
+    gameOver();
+  }
+}
+
+function gameOver() {
+  isPlaying = false;
+  cancelAnimationFrame(animationId);
+
+  card.style.display = "none";
+  message.style.display = "grid";
+
+  message.innerHTML = `
+    <h2>GAME OVER</h2>
+    <p>あなたのスコアは <strong>${score}</strong> 点です。</p>
+    <button id="restartButton">RETRY</button>
+  `;
+
+  document.getElementById("restartButton").addEventListener("click", startGame);
+}
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowUp") {
+    checkAnswer("for");
+  }
+
+  if (event.key === "ArrowDown") {
+    checkAnswer("since");
+  }
+});
+
+upButton.addEventListener("click", () => {
+  checkAnswer("for");
+});
+
+downButton.addEventListener("click", () => {
+  checkAnswer("since");
+});
+
+startButton.addEventListener("click", startGame);
