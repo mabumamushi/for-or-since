@@ -27,6 +27,40 @@ body.no-scroll {
   margin-bottom: 16px;
 }
 
+.left-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mode-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mode-button {
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 3px solid #1f2933;
+  border-radius: 999px;
+  box-shadow: 0 4px 0 #1f2933;
+  color: #1f2933;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.mode-button.active {
+  background: #1f2933;
+  color: #ffffff;
+}
+
+.mode-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #1f2933;
+}
+
 .title-control-row {
   display: flex;
   align-items: center;
@@ -68,10 +102,22 @@ h1 {
   justify-content: center;
 }
 
+.mini-controls.three-buttons button {
+  width: 96px;
+}
+
 .mini-controls button span {
   margin-top: 4px;
   font-size: 18px;
   line-height: 1;
+}
+
+.mini-controls button small {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.1;
+  color: #607080;
+  font-weight: 900;
 }
 
 .mini-controls button:active {
@@ -484,6 +530,20 @@ h1 {
     flex-direction: column;
   }
 
+  .left-header {
+    width: 100%;
+  }
+
+  .mode-row {
+    width: 100%;
+  }
+
+  .mode-button {
+    flex: 1;
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+
   .title-control-row {
     width: 100%;
     justify-content: flex-start;
@@ -494,14 +554,30 @@ h1 {
     font-size: 24px;
   }
 
+  .mini-controls.three-buttons {
+    width: 100%;
+  }
+
   .mini-controls button {
     width: 96px;
     height: 72px;
     font-size: 30px;
   }
 
+  .mini-controls.three-buttons button {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+    height: 76px;
+    font-size: 28px;
+  }
+
   .mini-controls button span {
     font-size: 16px;
+  }
+
+  .mini-controls button small {
+    font-size: 11px;
   }
 
   .score-row {
