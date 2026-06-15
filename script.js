@@ -68,7 +68,7 @@ let lastFrameTime = 0;
 let lastSpawnTime = 0;
 let spawnedCount = 0;
 
-let baseMoveSpeed = 180; // px / 秒
+let baseMoveSpeed = 180;
 let moveSpeed = baseMoveSpeed;
 
 highScoreEl.textContent = highScore;
@@ -107,7 +107,6 @@ function clearCards() {
 
 function getSpawnInterval() {
   const level = Math.floor(spawnedCount / 10);
-
   const interval = 2600 - level * 200;
 
   return Math.max(interval, 1000);
@@ -178,11 +177,9 @@ function findSafeYPosition() {
     }
   }
 
-  const lanes = [
-    minY,
-    minY + 130,
-    minY + 260
-  ].filter((laneY) => laneY <= maxY);
+  const lanes = [minY, minY + 130, minY + 260].filter((laneY) => {
+    return laneY <= maxY;
+  });
 
   const leastCrowdedLane = lanes.reduce((bestLane, laneY) => {
     const bestCount = countCardsNearLane(bestLane);
@@ -277,7 +274,6 @@ function checkAnswer(input) {
     playCorrectSound();
     showCorrectPop(targetCard.element);
     removeCard(targetCard);
-
   } else {
     triggerWrongEffect(targetCard.element, () => {
       gameOver();
@@ -344,29 +340,10 @@ function showReview() {
     return item.isCorrect;
   });
 
-  const summary = document.createElement("div");
-  summary.className = "review-summary";
-  summary.innerHTML = `
-    <div>
-      <strong>${answerLog.length}</strong>
-      <span>回答数</span>
-    </div>
-    <div>
-      <strong>${correctAnswers.length}</strong>
-      <span>正解</span>
-    </div>
-    <div>
-      <strong>${wrongAnswers.length}</strong>
-      <span>チェック</span>
-    </div>
-  `;
-  reviewList.appendChild(summary);
-
   const wrongSection = document.createElement("div");
   wrongSection.className = "review-section";
   wrongSection.innerHTML = `
-    <h3>Check Questions</h3>
-    <p class="review-section-note">間違えた問題・未回答の問題を確認しよう。</p>
+    <h3>Review</h3>
   `;
   reviewList.appendChild(wrongSection);
 
@@ -521,6 +498,14 @@ document.addEventListener("keydown", (event) => {
     event.preventDefault();
     checkAnswer("since");
   }
+});
+
+upButton.addEventListener("click", () => {
+  checkAnswer("for");
+});
+
+downButton.addEventListener("click", () => {
+  checkAnswer("since");
 });
 
 startButton.addEventListener("click", startGame);
