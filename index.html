@@ -3,15 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>For / Since Dash</title>
+  <title>For? Since?</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="app" id="app">
     <section class="top-bar">
-      <div>
-        <h1>For / Since Dash</h1>
-        <p>for なら ↑ / since なら ↓</p>
+      <div class="title-control-row">
+        <div>
+          <h1>For? Since?</h1>
+        </div>
+
+        <div class="mini-controls">
+          <button id="upButton">↑<span>for</span></button>
+          <button id="downButton">↓<span>since</span></button>
+        </div>
       </div>
 
       <div class="score-row">
@@ -31,31 +37,13 @@
       <div class="danger-line"></div>
 
       <div class="center-message" id="message">
-        <h2>For / Since Game</h2>
+        <h2>For? Since?</h2>
         <p>流れてくるカードを見て、正しい矢印キーを押そう。</p>
         <button id="startButton">START</button>
       </div>
     </section>
 
-    <section class="control-guide">
-      <div class="key-box">
-        <span class="arrow">↑</span>
-        <p>for</p>
-      </div>
-      <div class="key-box">
-        <span class="arrow">↓</span>
-        <p>since</p>
-      </div>
-    </section>
-
-    <section class="mobile-controls">
-      <button id="upButton">↑ for</button>
-      <button id="downButton">↓ since</button>
-    </section>
-
     <section class="review-panel" id="reviewPanel">
-      <h2>Review</h2>
-      <p class="review-note">答えたカードと正解を確認できます。</p>
       <div id="reviewList"></div>
     </section>
   </main>
