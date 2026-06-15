@@ -9,14 +9,18 @@
 <body>
   <main class="app" id="app">
     <section class="top-bar">
-      <div class="title-control-row">
-        <div>
-          <h1>For? Since?</h1>
+      <div class="left-header">
+        <div class="mode-row">
+          <button class="mode-button active" id="forSinceModeButton">For / Since</button>
+          <button class="mode-button" id="perfectModeButton">現在完了 3用法</button>
         </div>
 
-        <div class="mini-controls">
-          <button id="upButton">↑<span>for</span></button>
-          <button id="downButton">↓<span>since</span></button>
+        <div class="title-control-row">
+          <div>
+            <h1 id="gameTitle">For? Since?</h1>
+          </div>
+
+          <div class="mini-controls" id="miniControls"></div>
         </div>
       </div>
 
@@ -37,8 +41,8 @@
       <div class="danger-line"></div>
 
       <div class="center-message" id="message">
-        <h2>For? Since?</h2>
-        <p>流れてくるカードを見て、正しい矢印キーを押そう。</p>
+        <h2 id="messageTitle">For? Since?</h2>
+        <p id="messageText">流れてくるカードを見て、正しい矢印キーを押そう。</p>
         <button id="startButton">START</button>
       </div>
     </section>
