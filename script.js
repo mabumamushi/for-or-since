@@ -445,20 +445,14 @@ function playWrongSound() {
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowUp") {
+    event.preventDefault();
     checkAnswer("for");
   }
 
   if (event.key === "ArrowDown") {
+    event.preventDefault();
     checkAnswer("since");
   }
-});
-
-upButton.addEventListener("click", () => {
-  checkAnswer("for");
-});
-
-downButton.addEventListener("click", () => {
-  checkAnswer("since");
 });
 
 startButton.addEventListener("click", startGame);
