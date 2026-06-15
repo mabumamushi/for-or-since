@@ -340,28 +340,92 @@ function showReview() {
     return !item.isCorrect;
   });
 
+  const correctAnswers = answerLog.filter((item) => {
+    return item.isCorrect;
+  });
+
+  const summary = document.createElement("div");
+  summary.className = "review-summary";
+  summary.innerHTML = `
+    <div>
+      <strong>${answerLog.length}</strong>
+      <span>回答数</span>
+    </div>
+    <div>
+      <strong>${correctAnswers.length}</strong>
+      <span>正解</span>
+    </div>
+    <div>
+      <strong>${wrongAnswers.length}</strong>
+      <span>チェック</span>
+    </div>
+  `;
+  reviewList.appendChild(summary);
+
+  const wrongSection = document.createElement("div");
+  wrongSection.className = "review-section";
+  wrongSection.innerHTML = `
+    <h3>Check Questions</h3>
+    <p class="review-section-note">間違えた問題・未回答の問題を確認しよう。</p>
+  `;
+  reviewList.appendChild(wrongSection);
+
   if (wrongAnswers.length === 0) {
-    reviewList.innerHTML = `<p>間違えた問題はありません。Perfect!</p>`;
+    const perfectMessage = document.createElement("div");
+    perfectMessage.className = "perfect-message";
+    perfectMessage.textContent = "間違えた問題はありません。Perfect!";
+    reviewList.appendChild(perfectMessage);
+  } else {
+    wrongAnswers.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "review-item wrong large-wrong";
+
+      row.innerHTML = `
+        <div>
+          <div class="review-word">${item.text}</div>
+          <div class="review-detail">
+            あなたの回答：${item.yourAnswer} / 正解：${item.correctAnswer}
+          </div>
+        </div>
+        <div class="result-badge wrong">
+          CHECK
+        </div>
+      `;
+
+      reviewList.appendChild(row);
+    });
+  }
+
+  const correctSection = document.createElement("details");
+  correctSection.className = "correct-review-box";
+
+  correctSection.innerHTML = `
+    <summary>
+      正解した問題を見る 
+      <span>${correctAnswers.length}問</span>
+    </summary>
+    <div class="correct-grid" id="correctGrid"></div>
+  `;
+
+  reviewList.appendChild(correctSection);
+
+  const correctGrid = document.getElementById("correctGrid");
+
+  if (correctAnswers.length === 0) {
+    correctGrid.innerHTML = `<p class="no-correct-message">正解した問題はまだありません。</p>`;
     return;
   }
 
-  wrongAnswers.forEach((item) => {
-    const row = document.createElement("div");
-    row.className = "review-item wrong";
+  correctAnswers.forEach((item) => {
+    const chip = document.createElement("div");
+    chip.className = "correct-chip";
 
-    row.innerHTML = `
-      <div>
-        <div class="review-word">${item.text}</div>
-        <div class="review-detail">
-          あなたの回答：${item.yourAnswer} / 正解：${item.correctAnswer}
-        </div>
-      </div>
-      <div class="result-badge wrong">
-        CHECK
-      </div>
+    chip.innerHTML = `
+      <span class="correct-word">${item.text}</span>
+      <span class="correct-answer">${item.correctAnswer}</span>
     `;
 
-    reviewList.appendChild(row);
+    correctGrid.appendChild(chip);
   });
 }
 
