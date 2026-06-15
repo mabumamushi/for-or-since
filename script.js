@@ -80,6 +80,8 @@ function startGame() {
   answerLog = [];
   isPlaying = true;
 
+  document.body.classList.add("no-scroll");
+
   moveSpeed = baseMoveSpeed;
 
   scoreEl.textContent = score;
@@ -296,6 +298,8 @@ function removeCard(cardData) {
 function gameOver() {
   isPlaying = false;
   cancelAnimationFrame(animationId);
+
+  document.body.classList.remove("no-scroll");
 
   updateHighScore();
   showResultMessage();
