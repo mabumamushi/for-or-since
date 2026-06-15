@@ -4,13 +4,18 @@ const highScoreEl = document.getElementById("highScore");
 const message = document.getElementById("message");
 const startButton = document.getElementById("startButton");
 const gameArea = document.getElementById("gameArea");
-const upButton = document.getElementById("upButton");
-const downButton = document.getElementById("downButton");
 const reviewPanel = document.getElementById("reviewPanel");
 const reviewList = document.getElementById("reviewList");
 
-const questions = [
-  // for に続く語
+const gameTitle = document.getElementById("gameTitle");
+const messageTitle = document.getElementById("messageTitle");
+const messageText = document.getElementById("messageText");
+const miniControls = document.getElementById("miniControls");
+
+const forSinceModeButton = document.getElementById("forSinceModeButton");
+const perfectModeButton = document.getElementById("perfectModeButton");
+
+const forSinceQuestions = [
   { text: "three days", answer: "for" },
   { text: "two weeks", answer: "for" },
   { text: "five years", answer: "for" },
@@ -32,7 +37,6 @@ const questions = [
   { text: "ten years", answer: "for" },
   { text: "a few weeks", answer: "for" },
 
-  // since に続く語
   { text: "Monday", answer: "since" },
   { text: "2019", answer: "since" },
   { text: "last year", answer: "since" },
@@ -55,8 +59,75 @@ const questions = [
   { text: "I was ten", answer: "since" }
 ];
 
+const perfectQuestions = [
+  // 完了：〜したところだ / もう〜した / まだ〜していない
+  { text: "already", answer: "completion" },
+  { text: "yet", answer: "completion" },
+  { text: "just", answer: "completion" },
+  { text: "finally", answer: "completion" },
+  { text: "just finished", answer: "completion" },
+  { text: "already done", answer: "completion" },
+  { text: "not yet", answer: "completion" },
+  { text: "has just", answer: "completion" },
+  { text: "have already", answer: "completion" },
+  { text: "finally finished", answer: "completion" },
+
+  // 経験：〜したことがある
+  { text: "once", answer: "experience" },
+  { text: "twice", answer: "experience" },
+  { text: "three times", answer: "experience" },
+  { text: "many times", answer: "experience" },
+  { text: "never", answer: "experience" },
+  { text: "ever", answer: "experience" },
+  { text: "before", answer: "experience" },
+  { text: "several times", answer: "experience" },
+  { text: "five times", answer: "experience" },
+  { text: "how many times", answer: "experience" },
+
+  // 継続：ずっと〜している
+  { text: "for three days", answer: "continuation" },
+  { text: "for two weeks", answer: "continuation" },
+  { text: "for five years", answer: "continuation" },
+  { text: "for a long time", answer: "continuation" },
+  { text: "since Monday", answer: "continuation" },
+  { text: "since 2019", answer: "continuation" },
+  { text: "since last year", answer: "continuation" },
+  { text: "since yesterday", answer: "continuation" },
+  { text: "since this morning", answer: "continuation" },
+  { text: "since I was ten", answer: "continuation" }
+];
+
+const gameModes = {
+  forSince: {
+    title: "For? Since?",
+    messageTitle: "For? Since?",
+    messageText: "流れてくるカードを見て、for なら ↑、since なら ↓ を押そう。",
+    highScoreKey: "forSinceHighScore",
+    questions: forSinceQuestions,
+    controls: [
+      { key: "ArrowUp", answer: "for", arrow: "↑", label: "for" },
+      { key: "ArrowDown", answer: "since", arrow: "↓", label: "since" }
+    ]
+  },
+  perfect: {
+    title: "現在完了 3用法",
+    messageTitle: "現在完了 3用法",
+    messageText: "完了は ←、経験は ↑、継続は → を押そう。",
+    highScoreKey: "perfectHighScore",
+    questions: perfectQuestions,
+    controls: [
+      { key: "ArrowLeft", answer: "completion", arrow: "←", label: "完了", subLabel: "したところだ" },
+      { key: "ArrowUp", answer: "experience", arrow: "↑", label: "経験", subLabel: "したことがある" },
+      { key: "ArrowRight", answer: "continuation", arrow: "→", label: "継続", subLabel: "ずっとしている" }
+    ]
+  }
+};
+
+let currentModeName = "forSince";
+let currentMode = gameModes[currentModeName];
+
 let score = 0;
-let highScore = Number(localStorage.getItem("forSinceHighScore")) || 0;
+let highScore = Number(localStorage.getItem(currentMode.highScoreKey)) || 0;
 
 let isPlaying = false;
 let animationId = null;
@@ -72,6 +143,62 @@ let baseMoveSpeed = 180;
 let moveSpeed = baseMoveSpeed;
 
 highScoreEl.textContent = highScore;
+renderMode();
+
+function renderMode() {
+  currentMode = gameModes[currentModeName];
+
+  gameTitle.textContent = currentMode.title;
+  messageTitle.textContent = currentMode.messageTitle;
+  messageText.textContent = currentMode.messageText;
+
+  highScore = Number(localStorage.getItem(currentMode.highScoreKey)) || 0;
+  highScoreEl.textContent = highScore;
+
+  score = 0;
+  scoreEl.textContent = score;
+
+  reviewPanel.style.display = "none";
+  reviewList.innerHTML = "";
+
+  clearCards();
+
+  miniControls.innerHTML = "";
+  miniControls.classList.toggle("three-buttons", currentMode.controls.length === 3);
+
+  currentMode.controls.forEach((control) => {
+    const button = document.createElement("button");
+    button.innerHTML = `
+      ${control.arrow}
+      <span>${control.label}</span>
+      ${control.subLabel ? `<small>${control.subLabel}</small>` : ""}
+    `;
+
+    button.addEventListener("click", () => {
+      checkAnswer(control.answer);
+    });
+
+    miniControls.appendChild(button);
+  });
+
+  forSinceModeButton.classList.toggle("active", currentModeName === "forSince");
+  perfectModeButton.classList.toggle("active", currentModeName === "perfect");
+}
+
+function switchMode(modeName) {
+  if (isPlaying) return;
+
+  currentModeName = modeName;
+  renderMode();
+}
+
+forSinceModeButton.addEventListener("click", () => {
+  switchMode("forSince");
+});
+
+perfectModeButton.addEventListener("click", () => {
+  switchMode("perfect");
+});
 
 function startGame() {
   score = 0;
@@ -119,8 +246,8 @@ function getMoveSpeed() {
 }
 
 function spawnCard() {
-  const randomIndex = Math.floor(Math.random() * questions.length);
-  const question = questions[randomIndex];
+  const randomIndex = Math.floor(Math.random() * currentMode.questions.length);
+  const question = currentMode.questions[randomIndex];
 
   const card = document.createElement("div");
   card.className = "question-card";
@@ -226,7 +353,7 @@ function gameLoop(currentTime) {
   if (missedCard) {
     answerLog.push({
       text: missedCard.question.text,
-      correctAnswer: missedCard.question.answer,
+      correctAnswer: getAnswerLabel(missedCard.question.answer),
       yourAnswer: "未回答",
       isCorrect: false
     });
@@ -262,8 +389,8 @@ function checkAnswer(input) {
 
   answerLog.push({
     text: targetCard.question.text,
-    correctAnswer: targetCard.question.answer,
-    yourAnswer: input,
+    correctAnswer: getAnswerLabel(targetCard.question.answer),
+    yourAnswer: getAnswerLabel(input),
     isCorrect
   });
 
@@ -279,6 +406,18 @@ function checkAnswer(input) {
       gameOver();
     });
   }
+}
+
+function getAnswerLabel(answer) {
+  const labels = {
+    for: "for",
+    since: "since",
+    completion: "完了",
+    experience: "経験",
+    continuation: "継続"
+  };
+
+  return labels[answer] || answer;
 }
 
 function removeCard(cardData) {
@@ -305,7 +444,7 @@ function gameOver() {
 function updateHighScore() {
   if (score > highScore) {
     highScore = score;
-    localStorage.setItem("forSinceHighScore", highScore);
+    localStorage.setItem(currentMode.highScoreKey, highScore);
   }
 
   highScoreEl.textContent = highScore;
@@ -489,23 +628,14 @@ function playWrongSound() {
 }
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "ArrowUp") {
+  const matchedControl = currentMode.controls.find((control) => {
+    return control.key === event.key;
+  });
+
+  if (matchedControl) {
     event.preventDefault();
-    checkAnswer("for");
+    checkAnswer(matchedControl.answer);
   }
-
-  if (event.key === "ArrowDown") {
-    event.preventDefault();
-    checkAnswer("since");
-  }
-});
-
-upButton.addEventListener("click", () => {
-  checkAnswer("for");
-});
-
-downButton.addEventListener("click", () => {
-  checkAnswer("since");
 });
 
 startButton.addEventListener("click", startGame);
