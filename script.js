@@ -60,7 +60,6 @@ const forSinceQuestions = [
 ];
 
 const perfectQuestions = [
-  // 完了：〜したところだ / もう〜した / まだ〜していない
   { text: "already", answer: "completion" },
   { text: "yet", answer: "completion" },
   { text: "just", answer: "completion" },
@@ -72,7 +71,6 @@ const perfectQuestions = [
   { text: "have already", answer: "completion" },
   { text: "finally finished", answer: "completion" },
 
-  // 経験：〜したことがある
   { text: "once", answer: "experience" },
   { text: "twice", answer: "experience" },
   { text: "three times", answer: "experience" },
@@ -84,7 +82,6 @@ const perfectQuestions = [
   { text: "five times", answer: "experience" },
   { text: "how many times", answer: "experience" },
 
-  // 継続：ずっと〜している
   { text: "for three days", answer: "continuation" },
   { text: "for two weeks", answer: "continuation" },
   { text: "for five years", answer: "continuation" },
@@ -117,7 +114,7 @@ const gameModes = {
     questions: perfectQuestions,
     controls: [
       { key: "ArrowLeft", answer: "completion", arrow: "←", label: "完了", subLine1: "したところだ", subLine2: "" },
-      { key: "ArrowUp", answer: "experience", arrow: "↑", label: "経験", subLine1: "したことが", subLine2: "ある" },
+      { key: "ArrowUp", answer: "experience", arrow: "経験", label: "↑", subLine1: "したことが", subLine2: "ある" },
       { key: "ArrowRight", answer: "continuation", arrow: "継続", label: "→", subLine1: "ずっと", subLine2: "している" }
     ]
   }
