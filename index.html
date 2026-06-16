@@ -1,55 +1,634 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>For? Since?</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <main class="app" id="app">
-    <section class="top-bar">
-      <div class="header-main">
-        <div class="mode-row">
-          <button class="mode-button active" id="forSinceModeButton">For / Since</button>
-          <button class="mode-button" id="perfectModeButton">現在完了 3用法</button>
-        </div>
+* {
+  box-sizing: border-box;
+}
 
-        <h1 id="gameTitle">For? Since?</h1>
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f3f6f8;
+  color: #1f2933;
+}
 
-        <div class="control-score-row">
-          <div class="mini-controls" id="miniControls"></div>
+body.no-scroll {
+  overflow: hidden;
+}
 
-          <div class="score-row">
-            <div class="score-box">
-              <span>SCORE</span>
-              <strong id="score">0</strong>
-            </div>
+.app {
+  width: min(100%, 980px);
+  margin: 0 auto;
+  padding: 20px;
+}
 
-            <div class="score-box high-score">
-              <span>HIGH</span>
-              <strong id="highScore">0</strong>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+.top-bar {
+  margin-bottom: 16px;
+}
 
-    <section class="game-area" id="gameArea">
-      <div class="danger-line"></div>
+.header-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
 
-      <div class="center-message" id="message">
-        <h2 id="messageTitle">For? Since?</h2>
-        <p id="messageText">流れてくるカードを見て、正しい矢印キーを押すべし。</p>
-        <button id="startButton">START</button>
-      </div>
-    </section>
+.header-main h1 {
+  white-space: nowrap;
+}
 
-    <section class="review-panel" id="reviewPanel">
-      <div id="reviewList"></div>
-    </section>
-  </main>
+.mode-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
-  <script src="script.js"></script>
-</body>
-</html>
+.mode-button {
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 3px solid #1f2933;
+  border-radius: 999px;
+  box-shadow: 0 4px 0 #1f2933;
+  color: #1f2933;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.mode-button.active {
+  background: #1f2933;
+  color: #ffffff;
+}
+
+.mode-button:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #1f2933;
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+  letter-spacing: 0.04em;
+}
+
+.control-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+}
+
+.mini-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.mini-controls button {
+  width: 110px;
+  height: 82px;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 3px solid #1f2933;
+  border-radius: 16px;
+  box-shadow: 0 6px 0 #1f2933;
+  color: #1f2933;
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 900;
+  cursor: pointer;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-controls.three-buttons button {
+  width: 110px;
+  height: 82px;
+  padding: 6px 6px;
+}
+
+.control-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.control-arrow,
+.control-label {
+  display: inline-block;
+  margin-top: 0;
+  font-size: 16px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.mini-controls button small {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 4px;
+  font-size: 10px;
+  line-height: 1.1;
+  color: #607080;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.mini-controls button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #1f2933;
+}
+
+.score-row {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.score-box {
+  min-width: 110px;
+  padding: 12px 18px;
+  background: #ffffff;
+  border: 3px solid #1f2933;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 6px 0 #1f2933;
+}
+
+.score-box span {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #607080;
+}
+
+.score-box strong {
+  font-size: 34px;
+  line-height: 1;
+}
+
+.high-score {
+  background: #fff7d6;
+}
+
+.game-area {
+  position: relative;
+  height: 420px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ffffff, #e9f3f5);
+  border: 4px solid #1f2933;
+  border-radius: 24px;
+  box-shadow: 0 10px 0 #1f2933;
+}
+
+.game-area.wrong-flash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(239, 68, 68, 0.55);
+  z-index: 10;
+  pointer-events: none;
+  animation: redFlash 0.65s ease-out;
+}
+
+@keyframes redFlash {
+  0% {
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.shake {
+  animation: heavyShake 0.55s ease-in-out;
+}
+
+.card-shake {
+  animation: cardShake 0.55s ease-in-out;
+}
+
+@keyframes heavyShake {
+  0% {
+    transform: translateX(0);
+  }
+
+  12% {
+    transform: translateX(-14px) rotate(-1deg);
+  }
+
+  24% {
+    transform: translateX(14px) rotate(1deg);
+  }
+
+  36% {
+    transform: translateX(-12px) rotate(-1deg);
+  }
+
+  48% {
+    transform: translateX(12px) rotate(1deg);
+  }
+
+  60% {
+    transform: translateX(-8px);
+  }
+
+  72% {
+    transform: translateX(8px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes cardShake {
+  0% {
+    transform: translateY(-50%) translateX(0) rotate(0deg);
+  }
+
+  15% {
+    transform: translateY(-50%) translateX(-12px) rotate(-5deg);
+  }
+
+  30% {
+    transform: translateY(-50%) translateX(12px) rotate(5deg);
+  }
+
+  45% {
+    transform: translateY(-50%) translateX(-10px) rotate(-4deg);
+  }
+
+  60% {
+    transform: translateY(-50%) translateX(10px) rotate(4deg);
+  }
+
+  100% {
+    transform: translateY(-50%) translateX(0) rotate(0deg);
+  }
+}
+
+.danger-line {
+  position: absolute;
+  left: 42px;
+  top: 0;
+  width: 8px;
+  height: 100%;
+  background: #ef4444;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.7);
+  z-index: 2;
+}
+
+.question-card {
+  position: absolute;
+  right: -260px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 230px;
+  height: 110px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: #ffffff;
+  border: 4px solid #1f2933;
+  border-radius: 22px;
+  box-shadow: 0 8px 0 #1f2933;
+  font-size: 28px;
+  font-weight: 900;
+  text-align: center;
+  z-index: 3;
+}
+
+.question-card.correct-pop {
+  animation: correctPop 0.18s ease-out;
+}
+
+@keyframes correctPop {
+  0% {
+    transform: translateY(-50%) scale(1);
+  }
+
+  50% {
+    transform: translateY(-50%) scale(1.08);
+  }
+
+  100% {
+    transform: translateY(-50%) scale(1);
+  }
+}
+
+.center-message {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(6px);
+  z-index: 20;
+}
+
+.center-message h2 {
+  margin: 0 0 10px;
+  font-size: 34px;
+}
+
+.center-message p {
+  margin: 0 0 22px;
+  font-weight: 700;
+  color: #52616f;
+}
+
+.center-message button {
+  width: 180px;
+  margin: 0 auto;
+  padding: 14px 22px;
+  border: 3px solid #1f2933;
+  border-radius: 999px;
+  background: #22c55e;
+  color: white;
+  font-size: 20px;
+  font-weight: 900;
+  box-shadow: 0 6px 0 #1f2933;
+  cursor: pointer;
+}
+
+.center-message button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #1f2933;
+}
+
+.review-panel {
+  display: none;
+  margin-top: 28px;
+  padding: 20px;
+  background: #ffffff;
+  border: 3px solid #1f2933;
+  border-radius: 22px;
+  box-shadow: 0 7px 0 #1f2933;
+}
+
+.review-section {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.review-section h3 {
+  margin: 0;
+  font-size: 28px;
+}
+
+.review-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 14px;
+  border: 2px solid #d5dde5;
+  border-radius: 16px;
+  margin-bottom: 10px;
+  background: #f8fafc;
+}
+
+.review-item.wrong {
+  border-color: #ef4444;
+  background: #fff1f1;
+}
+
+.review-word {
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.review-detail {
+  font-size: 14px;
+  font-weight: 800;
+  color: #52616f;
+}
+
+.result-badge {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 2px solid #1f2933;
+  font-weight: 900;
+  background: #ffffff;
+}
+
+.result-badge.wrong {
+  color: #dc2626;
+}
+
+.large-wrong {
+  padding: 20px;
+  border-width: 3px;
+  margin-bottom: 14px;
+}
+
+.large-wrong .review-word {
+  font-size: 28px;
+}
+
+.large-wrong .review-detail {
+  font-size: 16px;
+  margin-top: 6px;
+}
+
+.perfect-message {
+  padding: 18px;
+  margin-bottom: 18px;
+  background: #f0fff5;
+  border: 3px solid #22c55e;
+  border-radius: 18px;
+  font-size: 20px;
+  font-weight: 900;
+  text-align: center;
+}
+
+.correct-review-box {
+  margin-top: 24px;
+  border: 3px solid #1f2933;
+  border-radius: 20px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.correct-review-box summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 18px;
+  background: #f0fff5;
+  font-size: 20px;
+  font-weight: 900;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.correct-review-box summary::-webkit-details-marker {
+  display: none;
+}
+
+.correct-review-box summary::after {
+  content: "＋";
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.correct-review-box[open] summary::after {
+  content: "−";
+}
+
+.correct-review-box summary span {
+  margin-left: auto;
+  margin-right: 14px;
+  padding: 5px 10px;
+  background: #ffffff;
+  border: 2px solid #1f2933;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.correct-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  padding: 16px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.correct-chip {
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 2px solid #d5dde5;
+  border-radius: 14px;
+}
+
+.correct-word {
+  display: block;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.correct-answer {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 3px 8px;
+  background: #dcfce7;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  color: #15803d;
+}
+
+.no-correct-message {
+  margin: 0;
+  padding: 14px;
+  color: #607080;
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .app {
+    padding: 14px;
+  }
+
+  .mode-row {
+    width: 100%;
+  }
+
+  .mode-button {
+    flex: 1;
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .control-score-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .mini-controls {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+  }
+
+  .mini-controls.three-buttons {
+    width: 100%;
+  }
+
+  .mini-controls button {
+    width: 96px;
+    height: 72px;
+    font-size: 30px;
+  }
+
+  .mini-controls.three-buttons button {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+    height: 72px;
+    padding: 5px 4px;
+  }
+
+  .control-arrow,
+  .control-label {
+    font-size: 14px;
+  }
+
+  .mini-controls button small {
+    font-size: 9px;
+    line-height: 1.05;
+  }
+
+  .score-row {
+    width: 100%;
+  }
+
+  .score-box {
+    flex: 1;
+  }
+
+  .game-area {
+    height: 360px;
+  }
+
+  .question-card {
+    width: 200px;
+    height: 96px;
+    font-size: 24px;
+  }
+
+  .review-item {
+    grid-template-columns: 1fr;
+  }
+
+  .large-wrong .review-word {
+    font-size: 24px;
+  }
+
+  .correct-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-height: 320px;
+  }
+
+  .correct-review-box summary {
+    font-size: 17px;
+    padding: 16px;
+  }
+}
