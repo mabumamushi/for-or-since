@@ -101,7 +101,7 @@ const gameModes = {
   forSince: {
     title: "For? Since?",
     messageTitle: "For? Since?",
-    messageText: "流れてくるカードを見て、for なら ↑、since なら ↓ を押そう。",
+    messageText: "流れてくるカードを見て、for なら ↑、since なら ↓ を押すべし。",
     highScoreKey: "forSinceHighScore",
     questions: forSinceQuestions,
     controls: [
