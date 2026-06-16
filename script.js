@@ -64,11 +64,9 @@ const perfectQuestions = [
   { text: "yet", answer: "completion" },
   { text: "just", answer: "completion" },
   { text: "finally", answer: "completion" },
-  { text: "just finished", answer: "completion" },
+  { text: "just done", answer: "completion" },
   { text: "already done", answer: "completion" },
   { text: "not yet", answer: "completion" },
-  { text: "has just", answer: "completion" },
-  { text: "have already", answer: "completion" },
   { text: "finally finished", answer: "completion" },
 
   { text: "once", answer: "experience" },
@@ -77,8 +75,7 @@ const perfectQuestions = [
   { text: "many times", answer: "experience" },
   { text: "never", answer: "experience" },
   { text: "ever", answer: "experience" },
-  { text: "before", answer: "experience" },
-  { text: "several times", answer: "experience" },
+  { text: "10 times", answer: "experience" },
   { text: "five times", answer: "experience" },
   { text: "how many times", answer: "experience" },
 
@@ -90,8 +87,9 @@ const perfectQuestions = [
   { text: "since 2019", answer: "continuation" },
   { text: "since last year", answer: "continuation" },
   { text: "since yesterday", answer: "continuation" },
-  { text: "since this morning", answer: "continuation" },
-  { text: "since I was ten", answer: "continuation" }
+  { text: "since I was 5", answer: "continuation" },
+  { text: "how long", answer: "experience" }
+
 ];
 
 const gameModes = {
