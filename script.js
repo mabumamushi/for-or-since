@@ -64,30 +64,16 @@ const perfectQuestions = [
   { text: "yet", answer: "completion" },
   { text: "just", answer: "completion" },
   { text: "finally", answer: "completion" },
-  { text: "just done", answer: "completion" },
-  { text: "already done", answer: "completion" },
-  { text: "not yet", answer: "completion" },
-  { text: "finally finished", answer: "completion" },
 
   { text: "once", answer: "experience" },
   { text: "twice", answer: "experience" },
-  { text: "three times", answer: "experience" },
-  { text: "many times", answer: "experience" },
+  { text: "- times", answer: "experience" },
   { text: "never", answer: "experience" },
   { text: "ever", answer: "experience" },
-  { text: "10 times", answer: "experience" },
-  { text: "five times", answer: "experience" },
   { text: "how many times", answer: "experience" },
 
-  { text: "for three days", answer: "continuation" },
-  { text: "for two weeks", answer: "continuation" },
-  { text: "for five years", answer: "continuation" },
-  { text: "for a long time", answer: "continuation" },
-  { text: "since Monday", answer: "continuation" },
-  { text: "since 2019", answer: "continuation" },
-  { text: "since last year", answer: "continuation" },
-  { text: "since yesterday", answer: "continuation" },
-  { text: "since I was 5", answer: "continuation" },
+  { text: "for", answer: "continuation" },
+  { text: "since", answer: "continuation" },
   { text: "how long", answer: "experience" }
 
 ];
