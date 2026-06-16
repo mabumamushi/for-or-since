@@ -112,13 +112,13 @@ const gameModes = {
   perfect: {
     title: "現在完了 3用法",
     messageTitle: "現在完了 3用法",
-    messageText: "完了は ←、経験は ↑、継続は → を押そう。",
+    messageText: "完了は ←、経験は ↑、継続は → を押すべし。",
     highScoreKey: "perfectHighScore",
     questions: perfectQuestions,
     controls: [
-      { key: "ArrowLeft", answer: "completion", arrow: "←", label: "完了", subLabel: "したところだ" },
-      { key: "ArrowUp", answer: "experience", arrow: "↑", label: "経験", subLabel: "したことがある" },
-      { key: "ArrowRight", answer: "continuation", arrow: "→", label: "継続", subLabel: "ずっとしている" }
+      { key: "ArrowLeft", answer: "completion", arrow: "←", label: "完了", subLine1: "したところだ", subLine2: "" },
+      { key: "ArrowUp", answer: "experience", arrow: "↑", label: "経験", subLine1: "したことが", subLine2: "ある" },
+      { key: "ArrowRight", answer: "continuation", arrow: "継続", label: "→", subLine1: "ずっと", subLine2: "している" }
     ]
   }
 };
@@ -169,9 +169,18 @@ function renderMode() {
   currentMode.controls.forEach((control) => {
     const button = document.createElement("button");
     button.innerHTML = `
-      ${control.arrow}
-      <span>${control.label}</span>
-      ${control.subLabel ? `<small>${control.subLabel}</small>` : ""}
+      <div class="control-main">
+        <span class="control-arrow">${control.arrow}</span>
+        <span class="control-label">${control.label}</span>
+      </div>
+      ${
+        control.subLine1 || control.subLine2
+          ? `<small>
+              ${control.subLine1 ? `<span>${control.subLine1}</span>` : ""}
+              ${control.subLine2 ? `<span>${control.subLine2}</span>` : ""}
+            </small>`
+          : ""
+      }
     `;
 
     button.addEventListener("click", () => {
