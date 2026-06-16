@@ -74,7 +74,7 @@ const perfectQuestions = [
 
   { text: "for", answer: "continuation" },
   { text: "since", answer: "continuation" },
-  { text: "how long", answer: "experience" }
+  { text: "how long", answer: "continuation" }
 
 ];
 
