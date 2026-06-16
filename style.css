@@ -20,17 +20,17 @@ body.no-scroll {
 }
 
 .top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
   margin-bottom: 16px;
 }
 
-.left-header {
+.header-main {
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.header-main h1 {
+  white-space: nowrap;
 }
 
 .mode-row {
@@ -61,20 +61,18 @@ body.no-scroll {
   box-shadow: 0 1px 0 #1f2933;
 }
 
-.title-control-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.title-control-row h1 {
-  white-space: nowrap;
-}
-
 h1 {
   margin: 0;
   font-size: 32px;
   letter-spacing: 0.04em;
+}
+
+.control-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
 }
 
 .mini-controls {
@@ -148,6 +146,7 @@ h1 {
 .score-row {
   display: flex;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .score-box {
@@ -545,15 +544,6 @@ h1 {
     padding: 14px;
   }
 
-  .top-bar {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .left-header {
-    width: 100%;
-  }
-
   .mode-row {
     width: 100%;
   }
@@ -564,17 +554,17 @@ h1 {
     font-size: 13px;
   }
 
-  .title-control-row {
-    width: 100%;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-  }
-
   h1 {
     font-size: 24px;
   }
 
+  .control-score-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
   .mini-controls {
+    flex: 1 1 100%;
     flex-wrap: wrap;
   }
 
